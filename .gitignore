@@ -1,0 +1,21 @@
+# Java / Maven
+backend/target/
+backend/.mvn/
+*.class
+*.jar
+*.war
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Ambiente
+.env
+*.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+CLAUDE.md
