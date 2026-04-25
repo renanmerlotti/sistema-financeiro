@@ -5,10 +5,10 @@ import com.financas.backend.dto.response.UserResponseDTO;
 import com.financas.backend.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -24,8 +24,11 @@ public class UserController {
         return ResponseEntity.ok(savedUser);
     }
 
-    @GetMapping
-    public ResponseEntity<Page<UserResponseDTO>> getAllUsers(Pageable pageable) {
-        return ResponseEntity.ok(userService.getAllUsers(pageable));
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable("id") Long userId) {
+        UserResponseDTO userResponseDTO = userService.getUserById(userId);
+
+        return ResponseEntity.ok(userResponseDTO);
     }
 }
