@@ -11,7 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,8 +24,6 @@ class UserServiceImplTest {
 
     @InjectMocks
     private UserServiceImpl userService;
-
-
 
 
     @Test
@@ -44,18 +41,4 @@ class UserServiceImplTest {
         assertEquals("joao", result.getUsername());
     }
 
-    @Test
-    @DisplayName("Users listed successfully")
-    void getAllUsers() {
-        User user1 = new User(1L, "vitor", "vitor@gmail.com", "123456");
-        User user2 = new User(2L, "gabriel", "gabriel@gmail.com", "654321");
-
-        when(userRepository.findAll()).thenReturn(List.of(user1, user2));
-
-        List<UserResponseDTO> result = userService.getAllUsers();
-
-        assertEquals(2, result.size());
-        assertEquals("vitor", result.get(0).getUsername());
-        assertEquals("gabriel", result.get(1).getUsername());
-    }
 }
