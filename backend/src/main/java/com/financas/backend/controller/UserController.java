@@ -1,14 +1,12 @@
 package com.financas.backend.controller;
 
-import com.financas.backend.dto.request.UserRegistrationDTO;
+import com.financas.backend.dto.request.UserRequestDTO;
 import com.financas.backend.dto.response.UserResponseDTO;
 import com.financas.backend.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -18,8 +16,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRegistrationDTO userRegistrationDTO){
-        UserResponseDTO savedUser = userService.createUser(userRegistrationDTO);
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO userRequestDTO){
+        UserResponseDTO savedUser = userService.createUser(userRequestDTO);
 
         return ResponseEntity.ok(savedUser);
     }

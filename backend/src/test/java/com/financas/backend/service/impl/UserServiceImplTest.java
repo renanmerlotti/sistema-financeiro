@@ -1,6 +1,6 @@
 package com.financas.backend.service.impl;
 
-import com.financas.backend.dto.request.UserRegistrationDTO;
+import com.financas.backend.dto.request.UserRequestDTO;
 import com.financas.backend.dto.response.UserResponseDTO;
 import com.financas.backend.entity.User;
 import com.financas.backend.repository.UserRepository;
@@ -29,7 +29,7 @@ class UserServiceImplTest {
     @Test
     @DisplayName("User created successfully")
     void createUserCase1() {
-        UserRegistrationDTO dto = new UserRegistrationDTO("joao", "joao@email.com", "123456");
+        UserRequestDTO dto = new UserRequestDTO("joao", "joao@email.com", "123456");
         User savedUser = new User(1L, "joao", "joao@email.com", "123456");
 
         when(userRepository.save(any(User.class))).thenReturn(savedUser);

@@ -1,6 +1,6 @@
 package com.financas.backend.dto.mapper;
 
-import com.financas.backend.dto.request.UserRegistrationDTO;
+import com.financas.backend.dto.request.UserRequestDTO;
 import com.financas.backend.dto.response.UserResponseDTO;
 import com.financas.backend.entity.User;
 
@@ -14,12 +14,12 @@ public class UserMapper {
         );
     }
 
-    public static User mapUserRegistrationDTOtoUser(UserRegistrationDTO userRegistrationDTO){
+    public static User mapUserRegistrationDTOtoUser(UserRequestDTO userRequestDTO){
         User user = new User();
 
-        user.setUsername(userRegistrationDTO.getUsername());
-        user.setEmail(userRegistrationDTO.getEmail());
-        user.setPassword(userRegistrationDTO.getPassword());
+        user.setUsername(userRequestDTO.getUsername());
+        user.setEmail(userRequestDTO.getEmail());
+        user.setPassword(userRequestDTO.getPassword());
 
         return user;
     }
