@@ -1,0 +1,37 @@
+package com.financas.backend.service.impl;
+
+import com.financas.backend.dto.mapper.AccountMapper;
+import com.financas.backend.dto.request.AccountRequestDTO;
+import com.financas.backend.dto.response.AccountResponseDTO;
+import com.financas.backend.entity.Account;
+import com.financas.backend.repository.AccountRepository;
+import com.financas.backend.service.AccountService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class AccountServiceImpl implements AccountService {
+
+    private final AccountRepository accountRepository;
+
+    @Override
+    public AccountResponseDTO createAccount(AccountRequestDTO accountRequestDTO) {
+        Account account = AccountMapper.mapAccountRequestDTOtoAccount(accountRequestDTO);
+        Account savedAccount = accountRepository.save(account);
+
+        return AccountMapper.mapAccountToAccountResponseDTO(savedAccount);
+    }
+
+    @Override
+    public List<AccountResponseDTO> listAccountsByUserId(Long userId) {
+        return accountRepository.findByUserId(userId)
+                .stream()
+                .map((account) -> AccountMapper.mapAccountToAccountResponseDTO(account))
+                .collect(Collectors.toList());
+    }
+
+}

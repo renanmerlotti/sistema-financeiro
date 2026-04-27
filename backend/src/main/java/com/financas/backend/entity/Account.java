@@ -24,7 +24,7 @@ public class Account {
     private String name;
 
     @Column(name = "balance")
-    private BigDecimal balance;
+    private BigDecimal balance = BigDecimal.ZERO;
 
     @Column(name = "account_type")
     @Enumerated(EnumType.STRING)
