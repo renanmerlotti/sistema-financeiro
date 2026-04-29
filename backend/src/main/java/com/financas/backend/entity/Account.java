@@ -20,13 +20,13 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "balance")
+    @Column(name = "balance", nullable = false)
     private BigDecimal balance = BigDecimal.ZERO;
 
-    @Column(name = "account_type")
+    @Column(name = "account_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private AccountType accountType;
 
