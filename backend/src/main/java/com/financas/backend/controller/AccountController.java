@@ -21,7 +21,7 @@ public class AccountController {
     public ResponseEntity<AccountResponseDTO> createAccount(@Valid @RequestBody AccountRequestDTO accountRequestDTO){
         AccountResponseDTO accountResponseDTO = accountService.createAccount(accountRequestDTO);
 
-        return ResponseEntity.ok(accountResponseDTO);
+        return ResponseEntity.status(201).body(accountResponseDTO);
     }
 
     @GetMapping
