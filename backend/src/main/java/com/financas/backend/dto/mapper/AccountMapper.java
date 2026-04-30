@@ -5,7 +5,6 @@ import com.financas.backend.dto.response.AccountResponseDTO;
 import com.financas.backend.entity.Account;
 
 public class AccountMapper {
-
     public static AccountResponseDTO mapAccountToAccountResponseDTO(Account account) {
         return new AccountResponseDTO(
                 account.getId(),
