@@ -6,8 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface TransactionService {
-    TransactionResponseDTO createTransaction(TransactionRequestDTO transactionRequestDTO);
+    TransactionResponseDTO createTransaction(TransactionRequestDTO transactionRequestDTO, Long userId);
 
-    Page<TransactionResponseDTO> listAllTransactions(Pageable pageable);
+    Page<TransactionResponseDTO> listAllTransactions(Long userId, Pageable pageable);
 
 }

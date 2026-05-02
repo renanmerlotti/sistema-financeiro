@@ -6,7 +6,7 @@ import com.financas.backend.dto.response.AccountResponseDTO;
 import java.util.List;
 
 public interface AccountService {
-    AccountResponseDTO createAccount(AccountRequestDTO accountRequestDTO);
+    AccountResponseDTO createAccount(AccountRequestDTO accountRequestDTO, Long userId);
 
     List<AccountResponseDTO> listAccountsByUserId(Long userId);
 }

@@ -5,6 +5,7 @@ import com.financas.backend.dto.response.TransactionResponseDTO;
 import com.financas.backend.entity.Account;
 import com.financas.backend.entity.Transaction;
 import com.financas.backend.entity.TransactionType;
+import com.financas.backend.entity.User;
 import com.financas.backend.exception.ResourceNotFoundException;
 import com.financas.backend.repository.AccountRepository;
 import com.financas.backend.repository.CategoryRepository;
@@ -27,7 +28,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,30 +45,31 @@ class TransactionServiceImplTest {
     @InjectMocks
     private TransactionServiceImpl transactionService;
 
-
     @Test
     @DisplayName("Should create transaction when transaction is saved")
     void createTransactionCase1() {
+        User user = new User(1L, "renan", "renan@email.com", "123456");
+
+        Account account = new Account();
+        account.setId(1L);
+        account.setUser(user);
+
         TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(
                 "Ifood", new BigDecimal("53.2"), LocalDate.of(2026, 4, 29), TransactionType.EXPENSE, 1L, null
         );
 
-        Account account = new Account();
-        account.setId(1L);
-
         Transaction transaction = new Transaction(1L, "Ifood", new BigDecimal("53.2"), LocalDate.of(2026, 4, 29), TransactionType.EXPENSE, account, null);
 
-        when(accountRepository.findById(account.getId())).thenReturn(Optional.of(account));
+        when(accountRepository.findById(1L)).thenReturn(Optional.of(account));
         when(transactionRepository.save(any(Transaction.class))).thenReturn(transaction);
 
-        TransactionResponseDTO result = transactionService.createTransaction(transactionRequestDTO);
+        TransactionResponseDTO result = transactionService.createTransaction(transactionRequestDTO, 1L);
 
         assertNotNull(result);
         assertEquals(1L, result.getId());
         assertEquals("Ifood", result.getDescription());
         assertEquals(1L, result.getAccountId());
         assertEquals(0, result.getAmount().compareTo(new BigDecimal("53.2")));
-
     }
 
     @Test
@@ -80,43 +81,46 @@ class TransactionServiceImplTest {
                 "Ifood", new BigDecimal("53.2"), LocalDate.of(2026, 4, 29), TransactionType.EXPENSE, 1L, null
         );
 
-        assertThrows(ResourceNotFoundException.class, () -> transactionService.createTransaction(transactionRequestDTO));
+        assertThrows(ResourceNotFoundException.class, () -> transactionService.createTransaction(transactionRequestDTO, 1L));
     }
 
     @Test
     @DisplayName("Should throw ResourceNotFoundException when categoryId not found")
     void createTransactionCase3() {
+        User user = new User(1L, "renan", "renan@email.com", "123456");
+
+        Account account = new Account();
+        account.setId(1L);
+        account.setUser(user);
+
         TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO(
                 "Ifood", new BigDecimal("53.2"), LocalDate.of(2026, 4, 29), TransactionType.EXPENSE, 1L, 1L
         );
 
-        Account account = new Account();
-        account.setId(1L);
-
-        when(accountRepository.findById(account.getId())).thenReturn(Optional.of(account));
+        when(accountRepository.findById(1L)).thenReturn(Optional.of(account));
         when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> transactionService.createTransaction(transactionRequestDTO));
-
+        assertThrows(ResourceNotFoundException.class, () -> transactionService.createTransaction(transactionRequestDTO, 1L));
     }
 
     @Test
-    @DisplayName("Should list all transactions when transactions is found")
+    @DisplayName("Should list all transactions filtered by user")
     void listAllTransactions() {
+        User user = new User(1L, "renan", "renan@email.com", "123456");
+
         Account account = new Account();
         account.setId(1L);
+        account.setUser(user);
 
         Transaction transaction1 = new Transaction(1L, "Ifood", new BigDecimal("53.2"), LocalDate.of(2026, 4, 29), TransactionType.EXPENSE, account, null);
         Transaction transaction2 = new Transaction(2L, "Uber", new BigDecimal("24.6"), LocalDate.of(2026, 4, 27), TransactionType.EXPENSE, account, null);
 
         Pageable pageable = PageRequest.of(0, 10);
+        Page<Transaction> page = new PageImpl<>(List.of(transaction1, transaction2), pageable, 2);
 
-        List<Transaction> transactions = List.of(transaction1, transaction2);
-        Page<Transaction> page = new PageImpl<>(transactions, pageable, transactions.size());
+        when(transactionRepository.findByAccountUserId(1L, pageable)).thenReturn(page);
 
-        when(transactionRepository.findAll(pageable)).thenReturn(page);
-
-        Page<TransactionResponseDTO> result = transactionService.listAllTransactions(pageable);
+        Page<TransactionResponseDTO> result = transactionService.listAllTransactions(1L, pageable);
 
         assertNotNull(result);
         assertEquals(2, result.getTotalElements());

@@ -6,6 +6,7 @@ import com.financas.backend.entity.Account;
 import com.financas.backend.entity.AccountType;
 import com.financas.backend.entity.User;
 import com.financas.backend.repository.AccountRepository;
+import com.financas.backend.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,24 +28,28 @@ class AccountServiceImplTest {
     @Mock
     private AccountRepository accountRepository;
 
+    @Mock
+    private UserRepository userRepository;
+
     @InjectMocks
     private AccountServiceImpl accountService;
 
     @Test
     @DisplayName("Should return AccountResponseDTO when account is saved")
     void createAccountCase1() {
+        User user = new User(1L, "renan", "renan@email.com", "123456");
         AccountRequestDTO accountRequestDTO = new AccountRequestDTO("Poupanca", AccountType.SAVINGS);
-        Account account = new Account(1L, "Poupanca", new BigDecimal("1000"), AccountType.SAVINGS, null);
+        Account account = new Account(1L, "Poupanca", new BigDecimal("1000"), AccountType.SAVINGS, user);
 
+        when(userRepository.getReferenceById(1L)).thenReturn(user);
         when(accountRepository.save(any(Account.class))).thenReturn(account);
 
-        AccountResponseDTO result = accountService.createAccount(accountRequestDTO);
+        AccountResponseDTO result = accountService.createAccount(accountRequestDTO, 1L);
 
         assertNotNull(result);
         assertEquals(1L, result.getId());
         assertEquals("Poupanca", result.getName());
     }
-
 
     @Test
     @DisplayName("Should return list of AccountResponseDTO when accounts are found by user id")

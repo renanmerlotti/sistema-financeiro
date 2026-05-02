@@ -24,17 +24,19 @@ public class TransactionServiceImpl implements TransactionService {
     private final AccountRepository accountRepository;
     private final CategoryRepository categoryRepository;
 
-
     @Override
-    public TransactionResponseDTO createTransaction(TransactionRequestDTO transactionRequestDTO) {
-        Transaction transaction = TransactionMapper.mapTransactionRequestDTOToTransaction(transactionRequestDTO);
-
+    public TransactionResponseDTO createTransaction(TransactionRequestDTO transactionRequestDTO, Long userId) {
         Account account = accountRepository.findById(transactionRequestDTO.getAccountId())
                 .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
 
+        if (!account.getUser().getId().equals(userId)) {
+            throw new ResourceNotFoundException("Account not found");
+        }
+
+        Transaction transaction = TransactionMapper.mapTransactionRequestDTOToTransaction(transactionRequestDTO);
         transaction.setAccount(account);
 
-        if(transactionRequestDTO.getCategoryId() != null) {
+        if (transactionRequestDTO.getCategoryId() != null) {
             Category category = categoryRepository.findById(transactionRequestDTO.getCategoryId())
                     .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
 
@@ -42,13 +44,12 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         Transaction savedTransaction = transactionRepository.save(transaction);
-
         return TransactionMapper.mapTransactionToTransactionResponseDTO(savedTransaction);
     }
 
     @Override
-    public Page<TransactionResponseDTO> listAllTransactions(Pageable pageable) {
-        return transactionRepository.findAll(pageable)
+    public Page<TransactionResponseDTO> listAllTransactions(Long userId, Pageable pageable) {
+        return transactionRepository.findByAccountUserId(userId, pageable)
                 .map((transaction) -> TransactionMapper.mapTransactionToTransactionResponseDTO(transaction));
     }
 }

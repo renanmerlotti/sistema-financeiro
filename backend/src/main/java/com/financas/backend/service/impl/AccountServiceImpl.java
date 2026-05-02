@@ -5,6 +5,7 @@ import com.financas.backend.dto.request.AccountRequestDTO;
 import com.financas.backend.dto.response.AccountResponseDTO;
 import com.financas.backend.entity.Account;
 import com.financas.backend.repository.AccountRepository;
+import com.financas.backend.repository.UserRepository;
 import com.financas.backend.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,10 +18,12 @@ import java.util.stream.Collectors;
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
+    private final UserRepository userRepository;
 
     @Override
-    public AccountResponseDTO createAccount(AccountRequestDTO accountRequestDTO) {
+    public AccountResponseDTO createAccount(AccountRequestDTO accountRequestDTO, Long userId) {
         Account account = AccountMapper.mapAccountRequestDTOtoAccount(accountRequestDTO);
+        account.setUser(userRepository.getReferenceById(userId));
         Account savedAccount = accountRepository.save(account);
 
         return AccountMapper.mapAccountToAccountResponseDTO(savedAccount);
@@ -30,8 +33,7 @@ public class AccountServiceImpl implements AccountService {
     public List<AccountResponseDTO> listAccountsByUserId(Long userId) {
         return accountRepository.findByUserId(userId)
                 .stream()
-                .map((account) -> AccountMapper.mapAccountToAccountResponseDTO(account))
+                .map(account -> AccountMapper.mapAccountToAccountResponseDTO(account))
                 .collect(Collectors.toList());
     }
-
 }
