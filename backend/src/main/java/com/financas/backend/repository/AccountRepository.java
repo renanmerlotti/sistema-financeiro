@@ -10,5 +10,4 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     List<Account> findByUserId(Long userId);
 
-    Long user(User user);
 }
