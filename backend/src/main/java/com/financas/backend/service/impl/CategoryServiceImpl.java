@@ -42,11 +42,15 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void deleteCategory(Long categoryId) {
+    public void deleteCategory(Long categoryId, Long userId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category with id " + categoryId + " not found"));
 
-        if(transactionRepository.existsByCategoryId(categoryId)) {
+        if (!category.getUser().getId().equals(userId)) {
+            throw new ResourceNotFoundException("Category with id " + categoryId + " not found");
+        }
+
+        if (transactionRepository.existsByCategoryId(categoryId)) {
             throw new BusinessRuleException("Cannot delete category with associated transactions");
         }
 

@@ -42,11 +42,15 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void deleteAccount(Long accountId) {
+    public void deleteAccount(Long accountId, Long userId) {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new ResourceNotFoundException("Account with id " + accountId + " not found"));
 
-        if(transactionRepository.existsByAccountId(accountId)) {
+        if (!account.getUser().getId().equals(userId)) {
+            throw new ResourceNotFoundException("Account with id " + accountId + " not found");
+        }
+
+        if (transactionRepository.existsByAccountId(accountId)) {
             throw new BusinessRuleException("Cannot delete account with associated transactions");
         }
 

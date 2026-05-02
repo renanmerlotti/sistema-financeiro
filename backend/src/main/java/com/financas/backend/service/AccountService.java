@@ -10,5 +10,5 @@ public interface AccountService {
 
     List<AccountResponseDTO> listAccountsByUserId(Long userId);
 
-    void deleteAccount(Long accountId);
+    void deleteAccount(Long accountId, Long userId);
 }

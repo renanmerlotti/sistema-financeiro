@@ -54,10 +54,14 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public void deleteTransaction(Long transactionId) {
+    public void deleteTransaction(Long transactionId, Long userId) {
         Transaction transaction = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction with id " +
                         transactionId + " not found"));
+
+        if (!transaction.getAccount().getUser().getId().equals(userId)) {
+            throw new ResourceNotFoundException("Transaction with id " + transactionId + " not found");
+        }
 
         transactionRepository.delete(transaction);
     }

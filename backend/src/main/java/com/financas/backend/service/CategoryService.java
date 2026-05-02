@@ -10,5 +10,5 @@ public interface CategoryService {
 
     List<CategoryResponseDTO> listCategoriesByUserId(Long userId);
 
-    void deleteCategory(Long categoryId);
+    void deleteCategory(Long categoryId, Long userId);
 }
