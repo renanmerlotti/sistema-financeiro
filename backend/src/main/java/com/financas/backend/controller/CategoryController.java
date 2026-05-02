@@ -32,4 +32,12 @@ public class CategoryController {
         List<CategoryResponseDTO> categories = categoryService.listCategoriesByUserId(user.getId());
         return ResponseEntity.ok(categories);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable("id") Long categoryId,
+                                               @AuthenticationPrincipal User user) {
+        categoryService.deleteCategory(categoryId, user.getId());
+
+        return ResponseEntity.noContent().build();
+    }
 }

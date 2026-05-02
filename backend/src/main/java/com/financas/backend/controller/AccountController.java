@@ -32,4 +32,12 @@ public class AccountController {
         List<AccountResponseDTO> accounts = accountService.listAccountsByUserId(user.getId());
         return ResponseEntity.ok(accounts);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAccount(@PathVariable("id") Long accountId,
+                                              @AuthenticationPrincipal User user) {
+        accountService.deleteAccount(accountId, user.getId());
+
+        return ResponseEntity.noContent().build();
+    }
 }

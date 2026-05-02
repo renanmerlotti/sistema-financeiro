@@ -33,4 +33,12 @@ public class TransactionController {
             Pageable pageable) {
         return ResponseEntity.ok(transactionService.listAllTransactions(user.getId(), pageable));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTransaction(@PathVariable("id") Long transactionId,
+                                                  @AuthenticationPrincipal User user) {
+        transactionService.deleteTransaction(transactionId, user.getId());
+
+        return ResponseEntity.noContent().build();
+    }
 }
