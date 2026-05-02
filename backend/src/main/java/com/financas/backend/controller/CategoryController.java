@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +32,17 @@ public class CategoryController {
     public ResponseEntity<List<CategoryResponseDTO>> listCategories(@AuthenticationPrincipal User user) {
         List<CategoryResponseDTO> categories = categoryService.listCategoriesByUserId(user.getId());
         return ResponseEntity.ok(categories);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CategoryResponseDTO> updateCategory(
+            @PathVariable("id") Long categoryId,
+            @RequestBody CategoryRequestDTO categoryRequestDTO,
+            @AuthenticationPrincipal UserDetails userDetails
+            ) {
+        Long userId = ((User) userDetails).getId();
+
+        return ResponseEntity.status(200).body(categoryService.updateCategory(categoryId, categoryRequestDTO, userId));
     }
 
     @DeleteMapping("/{id}")

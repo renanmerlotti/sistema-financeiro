@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -32,6 +33,18 @@ public class TransactionController {
             @AuthenticationPrincipal User user,
             Pageable pageable) {
         return ResponseEntity.ok(transactionService.listAllTransactions(user.getId(), pageable));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TransactionResponseDTO> updateTransaction(
+            @PathVariable("id") Long transactionId,
+            @RequestBody TransactionRequestDTO transactionRequestDTO,
+            @AuthenticationPrincipal UserDetails userDetails
+            ) {
+
+        Long userId = ((User) userDetails).getId();
+
+        return ResponseEntity.status(200).body(transactionService.updateTransaction(transactionId, transactionRequestDTO, userId));
     }
 
     @DeleteMapping("/{id}")

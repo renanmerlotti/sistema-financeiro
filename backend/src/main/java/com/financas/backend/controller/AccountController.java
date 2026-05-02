@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +32,17 @@ public class AccountController {
     public ResponseEntity<List<AccountResponseDTO>> listAccounts(@AuthenticationPrincipal User user) {
         List<AccountResponseDTO> accounts = accountService.listAccountsByUserId(user.getId());
         return ResponseEntity.ok(accounts);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<AccountResponseDTO> updateAccount(
+            @PathVariable("id") Long accountId,
+            @RequestBody AccountRequestDTO accountRequestDTO,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        Long userId = ((User) userDetails).getId();
+
+        return  ResponseEntity.status(200).body(accountService.updateAccount(accountId, accountRequestDTO, userId));
     }
 
     @DeleteMapping("/{id}")
