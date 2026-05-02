@@ -9,4 +9,6 @@ public interface AccountService {
     AccountResponseDTO createAccount(AccountRequestDTO accountRequestDTO, Long userId);
 
     List<AccountResponseDTO> listAccountsByUserId(Long userId);
+
+    void deleteAccount(Long accountId);
 }

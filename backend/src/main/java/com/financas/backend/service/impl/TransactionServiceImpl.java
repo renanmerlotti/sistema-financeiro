@@ -52,4 +52,13 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.findByAccountUserId(userId, pageable)
                 .map((transaction) -> TransactionMapper.mapTransactionToTransactionResponseDTO(transaction));
     }
+
+    @Override
+    public void deleteTransaction(Long transactionId) {
+        Transaction transaction = transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction with id " +
+                        transactionId + " not found"));
+
+        transactionRepository.delete(transaction);
+    }
 }

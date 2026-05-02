@@ -7,4 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
     Page<Transaction> findByAccountUserId(Long userId, Pageable pageable);
+
+    boolean existsByAccountId(Long accountId);
+
+    boolean existsByCategoryId(Long categoryId);
 }

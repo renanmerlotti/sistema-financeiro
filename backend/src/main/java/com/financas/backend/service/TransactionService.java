@@ -10,4 +10,6 @@ public interface TransactionService {
 
     Page<TransactionResponseDTO> listAllTransactions(Long userId, Pageable pageable);
 
+    void deleteTransaction(Long transactionId);
+
 }
