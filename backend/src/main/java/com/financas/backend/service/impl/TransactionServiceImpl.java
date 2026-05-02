@@ -54,6 +54,22 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    public TransactionResponseDTO updateTransaction(Long transactionId, TransactionRequestDTO dto, Long userId) {
+        Transaction transaction = transactionRepository.findByIdAndAccountUserId(transactionId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction with id " + transactionId + " not found"));
+
+        transaction.setDescription(dto.getDescription());
+        transaction.setAmount(dto.getAmount());
+        transaction.setDate(dto.getDate());
+        transaction.setTransactionType(dto.getTransactionType());
+
+        Transaction updated = transactionRepository.save(transaction);
+
+        return TransactionMapper.mapTransactionToTransactionResponseDTO(updated);
+
+    }
+
+    @Override
     public void deleteTransaction(Long transactionId, Long userId) {
         Transaction transaction = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction with id " +

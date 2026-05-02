@@ -10,5 +10,7 @@ public interface AccountService {
 
     List<AccountResponseDTO> listAccountsByUserId(Long userId);
 
+    AccountResponseDTO updateAccount(Long accountId, AccountRequestDTO dto, Long userId);
+
     void deleteAccount(Long accountId, Long userId);
 }
