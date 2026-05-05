@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+@layer base {
+  .serif {
+    font-family: 'Lora', serif;
+  }
+  .mono {
+    font-family: 'DM Mono', monospace;
+  }
+}
