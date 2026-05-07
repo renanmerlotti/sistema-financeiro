@@ -27,5 +27,9 @@ public class TransactionResponseDTO {
 
     private Long accountId;
 
+    private String accountName;
+
     private Long categoryId;
+
+    private String categoryName;
 }

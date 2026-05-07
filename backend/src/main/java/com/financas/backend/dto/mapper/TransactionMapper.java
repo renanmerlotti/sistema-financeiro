@@ -14,7 +14,9 @@ public class TransactionMapper {
                 transaction.getDate(),
                 transaction.getTransactionType(),
                 transaction.getAccount().getId(),
-                transaction.getCategory() != null ? transaction.getCategory().getId() : null
+                transaction.getAccount().getName(),
+                transaction.getCategory() != null ? transaction.getCategory().getId() : null,
+                transaction.getCategory() != null ? transaction.getCategory().getName() : null
         );
     }
 
