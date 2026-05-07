@@ -5,6 +5,7 @@ import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
 import Transactions from "./components/Transactions";
 import Accounts from "./components/Accounts";
+import Categories from "./components/Categories";
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/accounts" element={<Accounts />} />
+          <Route path="/categories" element={<Categories />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
