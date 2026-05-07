@@ -5,10 +5,12 @@ import com.financas.backend.dto.response.TransactionResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
+
 public interface TransactionService {
     TransactionResponseDTO createTransaction(TransactionRequestDTO transactionRequestDTO, Long userId);
 
-    Page<TransactionResponseDTO> listAllTransactions(Long userId, Pageable pageable);
+    Page<TransactionResponseDTO> listAllTransactions(Long userId, LocalDate startDate, LocalDate endDate, Pageable pageable);
 
     TransactionResponseDTO updateTransaction(Long transactionId, TransactionRequestDTO dto, Long userId);
 

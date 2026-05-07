@@ -16,6 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Service
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
@@ -48,9 +50,13 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Page<TransactionResponseDTO> listAllTransactions(Long userId, Pageable pageable) {
+    public Page<TransactionResponseDTO> listAllTransactions(Long userId, LocalDate startDate, LocalDate endDate, Pageable pageable) {
+        if (startDate != null && endDate != null) {
+            return transactionRepository.findByAccountUserIdAndDateBetween(userId, startDate, endDate, pageable)
+                    .map(transaction -> TransactionMapper.mapTransactionToTransactionResponseDTO(transaction));
+        }
         return transactionRepository.findByAccountUserId(userId, pageable)
-                .map((transaction) -> TransactionMapper.mapTransactionToTransactionResponseDTO(transaction));
+                .map(transaction -> TransactionMapper.mapTransactionToTransactionResponseDTO(transaction));
     }
 
     @Override

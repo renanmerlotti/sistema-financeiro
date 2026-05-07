@@ -120,7 +120,7 @@ class TransactionServiceImplTest {
 
         when(transactionRepository.findByAccountUserId(1L, pageable)).thenReturn(page);
 
-        Page<TransactionResponseDTO> result = transactionService.listAllTransactions(1L, pageable);
+        Page<TransactionResponseDTO> result = transactionService.listAllTransactions(1L, null, null, pageable);
 
         assertNotNull(result);
         assertEquals(2, result.getTotalElements());
