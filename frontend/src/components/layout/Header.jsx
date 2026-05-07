@@ -10,10 +10,13 @@ const PAGE_LABELS = {
   '/categories':   'Categories',
 }
 
+const FILTER_PAGES = ['/dashboard']
+
 export default function Header() {
   const [activeFilter, setActiveFilter] = useState('This month')
   const { pathname } = useLocation()
   const pageLabel = PAGE_LABELS[pathname] ?? 'Dashboard'
+  const showFilter = FILTER_PAGES.includes(pathname)
 
   return (
     <header className="h-14 border-b border-neutral-800 flex items-center justify-between px-6 shrink-0">
@@ -26,23 +29,25 @@ export default function Header() {
 
       <div className="flex items-center gap-3">
 
-        <div className="flex border border-neutral-800">
-          {FILTERS.map((f, i) => (
-            <button
-              key={f}
-              onClick={() => setActiveFilter(f)}
-              className={`mono text-xs px-3 py-1.5 transition-colors ${
-                i > 0 ? 'border-l border-neutral-800' : ''
-              } ${
-                activeFilter === f
-                  ? 'bg-neutral-800 text-white'
-                  : 'text-neutral-500 hover:text-neutral-300'
-              }`}
-            >
-              {f}
-            </button>
-          ))}
-        </div>
+        {showFilter && (
+          <div className="flex border border-neutral-800">
+            {FILTERS.map((f, i) => (
+              <button
+                key={f}
+                onClick={() => setActiveFilter(f)}
+                className={`mono text-xs px-3 py-1.5 transition-colors ${
+                  i > 0 ? 'border-l border-neutral-800' : ''
+                } ${
+                  activeFilter === f
+                    ? 'bg-neutral-800 text-white'
+                    : 'text-neutral-500 hover:text-neutral-300'
+                }`}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
+        )}
 
         <button className="mono bg-neutral-100 hover:bg-neutral-300 text-neutral-950 text-xs px-4 py-2 transition-colors">
           + New transaction

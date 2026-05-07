@@ -4,7 +4,12 @@ import api from "../../api/axios";
 
 const ACCOUNT_TYPES = ["CHECKING", "SAVINGS", "WALLET"];
 
-export default function AccountSlideOver({ isOpen, onClose, onSuccess, account }) {
+export default function AccountSlideOver({
+  isOpen,
+  onClose,
+  onSuccess,
+  account,
+}) {
   const isEditing = !!account;
 
   const [name, setName] = useState("");
@@ -42,7 +47,11 @@ export default function AccountSlideOver({ isOpen, onClose, onSuccess, account }
         handleClose();
         onSuccess();
       })
-      .catch(() => setError(isEditing ? "Failed to update account." : "Failed to create account."))
+      .catch(() =>
+        setError(
+          isEditing ? "Failed to update account." : "Failed to create account.",
+        ),
+      )
       .finally(() => setLoading(false));
   }
 
@@ -50,7 +59,9 @@ export default function AccountSlideOver({ isOpen, onClose, onSuccess, account }
     <>
       <div
         className={`fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${
-          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          isOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
         }`}
         onClick={handleClose}
       />
@@ -72,7 +83,10 @@ export default function AccountSlideOver({ isOpen, onClose, onSuccess, account }
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col flex-1 px-5 py-6 gap-5">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col flex-1 px-5 py-6 gap-5"
+        >
           <div className="flex flex-col gap-1.5">
             <label className="mono text-neutral-500 text-xs">Name</label>
             <input
@@ -108,7 +122,13 @@ export default function AccountSlideOver({ isOpen, onClose, onSuccess, account }
               disabled={loading}
               className="w-full mono bg-neutral-100 hover:bg-neutral-300 text-neutral-950 text-xs py-2.5 transition-colors disabled:opacity-50"
             >
-              {loading ? (isEditing ? "Saving..." : "Creating...") : (isEditing ? "Save changes" : "Create account")}
+              {loading
+                ? isEditing
+                  ? "Saving..."
+                  : "Creating..."
+                : isEditing
+                  ? "Save changes"
+                  : "Create account"}
             </button>
           </div>
         </form>
