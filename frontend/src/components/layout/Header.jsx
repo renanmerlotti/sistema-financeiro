@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const FILTERS = ['This month', 'Last month', 'All time']
 
@@ -15,6 +15,7 @@ const FILTER_PAGES = ['/dashboard']
 export default function Header() {
   const [activeFilter, setActiveFilter] = useState('This month')
   const { pathname } = useLocation()
+  const navigate = useNavigate()
   const pageLabel = PAGE_LABELS[pathname] ?? 'Dashboard'
   const showFilter = FILTER_PAGES.includes(pathname)
 
@@ -49,7 +50,10 @@ export default function Header() {
           </div>
         )}
 
-        <button className="mono bg-neutral-100 hover:bg-neutral-300 text-neutral-950 text-xs px-4 py-2 transition-colors">
+        <button
+          onClick={() => navigate('/transactions', { state: { openNew: true } })}
+          className="mono bg-neutral-100 hover:bg-neutral-300 text-neutral-950 text-xs px-4 py-2 transition-colors"
+        >
           + New transaction
         </button>
 
