@@ -6,6 +6,7 @@ import com.financas.backend.dto.response.TransactionResponseDTO;
 import com.financas.backend.entity.Account;
 import com.financas.backend.entity.Category;
 import com.financas.backend.entity.Transaction;
+import com.financas.backend.entity.TransactionType;
 import com.financas.backend.exception.ResourceNotFoundException;
 import com.financas.backend.repository.AccountRepository;
 import com.financas.backend.repository.CategoryRepository;
@@ -46,6 +47,14 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         Transaction savedTransaction = transactionRepository.save(transaction);
+
+        if (savedTransaction.getTransactionType() == TransactionType.INCOME) {
+            account.setBalance(account.getBalance().add(savedTransaction.getAmount()));
+        } else {
+            account.setBalance(account.getBalance().subtract(savedTransaction.getAmount()));
+        }
+        accountRepository.save(account);
+
         return TransactionMapper.mapTransactionToTransactionResponseDTO(savedTransaction);
     }
 
@@ -64,10 +73,24 @@ public class TransactionServiceImpl implements TransactionService {
         Transaction transaction = transactionRepository.findByIdAndAccountUserId(transactionId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction with id " + transactionId + " not found"));
 
+        Account account = transaction.getAccount();
+        if (transaction.getTransactionType() == TransactionType.INCOME) {
+            account.setBalance(account.getBalance().subtract(transaction.getAmount()));
+        } else {
+            account.setBalance(account.getBalance().add(transaction.getAmount()));
+        }
+
         transaction.setDescription(dto.getDescription());
         transaction.setAmount(dto.getAmount());
         transaction.setDate(dto.getDate());
         transaction.setTransactionType(dto.getTransactionType());
+
+        if (dto.getTransactionType() == TransactionType.INCOME) {
+            account.setBalance(account.getBalance().add(dto.getAmount()));
+        } else {
+            account.setBalance(account.getBalance().subtract(dto.getAmount()));
+        }
+        accountRepository.save(account);
 
         Transaction updated = transactionRepository.save(transaction);
 
@@ -84,6 +107,14 @@ public class TransactionServiceImpl implements TransactionService {
         if (!transaction.getAccount().getUser().getId().equals(userId)) {
             throw new ResourceNotFoundException("Transaction with id " + transactionId + " not found");
         }
+
+        Account account = transaction.getAccount();
+        if (transaction.getTransactionType() == TransactionType.INCOME) {
+            account.setBalance(account.getBalance().subtract(transaction.getAmount()));
+        } else {
+            account.setBalance(account.getBalance().add(transaction.getAmount()));
+        }
+        accountRepository.save(account);
 
         transactionRepository.delete(transaction);
     }
