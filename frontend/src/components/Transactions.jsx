@@ -144,7 +144,7 @@ export default function Transactions() {
                       <td className="mono text-white text-sm px-4 py-3">
                         {tx.description ?? "—"}
                       </td>
-                      <td className={`mono text-sm px-4 py-3 ${tx.transactionType === "INCOME" ? "text-white" : "text-neutral-400"}`}>
+                      <td className={tx.transactionType === "INCOME" ? "mono text-sm px-4 py-3 text-emerald-400" : "mono text-sm px-4 py-3 text-red-400"}>
                         {formatAmount(tx.amount, tx.transactionType)}
                       </td>
                       <td className="px-4 py-3">
