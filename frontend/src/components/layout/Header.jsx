@@ -1,7 +1,10 @@
-import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-const FILTERS = ['This month', 'Last month', 'All time']
+const FILTERS = [
+  { label: 'This month', value: 'THIS_MONTH' },
+  { label: 'Last month', value: 'LAST_MONTH' },
+  { label: 'All time',   value: 'ALL_TIME'   },
+]
 
 const PAGE_LABELS = {
   '/dashboard':    'Dashboard',
@@ -12,8 +15,7 @@ const PAGE_LABELS = {
 
 const FILTER_PAGES = ['/dashboard']
 
-export default function Header() {
-  const [activeFilter, setActiveFilter] = useState('This month')
+export default function Header({ period, onPeriodChange }) {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const pageLabel = PAGE_LABELS[pathname] ?? 'Dashboard'
@@ -32,19 +34,19 @@ export default function Header() {
 
         {showFilter && (
           <div className="flex border border-neutral-800">
-            {FILTERS.map((f, i) => (
+            {FILTERS.map(({ label, value }, i) => (
               <button
-                key={f}
-                onClick={() => setActiveFilter(f)}
+                key={value}
+                onClick={() => onPeriodChange?.(value)}
                 className={`mono text-xs px-3 py-1.5 transition-colors ${
                   i > 0 ? 'border-l border-neutral-800' : ''
                 } ${
-                  activeFilter === f
+                  period === value
                     ? 'bg-neutral-800 text-white'
                     : 'text-neutral-500 hover:text-neutral-300'
                 }`}
               >
-                {f}
+                {label}
               </button>
             ))}
           </div>
