@@ -1,11 +1,11 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import {
   LayoutGrid,
   ArrowLeftRight,
   Wallet,
   Tag,
-  ChevronsUpDown,
+  LogOut,
 } from "lucide-react";
 
 const WORKSPACE_NAV = [
@@ -36,7 +36,13 @@ function NavItem({ label, path, Icon }) {
 }
 
 export default function Sidebar() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    logout();
+    navigate('/login');
+  }
 
   const initials = user?.username
     ? user.username
@@ -85,8 +91,11 @@ export default function Sidebar() {
               {user?.email ?? "—"}
             </p>
           </div>
-          <button className="text-neutral-600 hover:text-neutral-400 transition-colors shrink-0">
-            <ChevronsUpDown size={14} />
+          <button
+            onClick={handleLogout}
+            className="text-red-400 hover:text-red-300 transition-colors shrink-0"
+          >
+            <LogOut size={14} />
           </button>
         </div>
       </div>
