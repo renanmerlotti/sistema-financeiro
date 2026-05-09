@@ -33,6 +33,17 @@ services:
       db:
         condition: service_healthy
 
+  frontend:
+    build:
+      context: ./frontend
+    container_name: financas-frontend
+    ports:
+      - "5173:5173"
+    networks:
+      - financas-network
+    depends_on:
+      - backend
+
 networks:
   financas-network:
     driver: bridge
