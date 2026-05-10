@@ -3,6 +3,7 @@ package com.financas.backend.service.impl;
 import com.financas.backend.dto.request.TransactionRequestDTO;
 import com.financas.backend.dto.response.TransactionResponseDTO;
 import com.financas.backend.entity.Account;
+import com.financas.backend.entity.AccountType;
 import com.financas.backend.entity.Transaction;
 import com.financas.backend.entity.TransactionType;
 import com.financas.backend.entity.User;
@@ -28,6 +29,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -105,7 +107,7 @@ class TransactionServiceImplTest {
 
     @Test
     @DisplayName("Should list all transactions filtered by user")
-    void listAllTransactions() {
+    void listAllTransactionsCase1() {
         User user = new User(1L, "renan", "renan@email.com", "123456");
 
         Account account = new Account();
@@ -126,5 +128,81 @@ class TransactionServiceImplTest {
         assertEquals(2, result.getTotalElements());
         assertEquals("Ifood", result.getContent().get(0).getDescription());
         assertEquals("Uber", result.getContent().get(1).getDescription());
+    }
+
+    @Test
+    @DisplayName("Should list transactions filtered by user and date range")
+    void listAllTransactionsCase2() {
+        User user = new User(1L, "renan", "renan@email.com", "123456");
+
+        Account account = new Account();
+        account.setId(1L);
+        account.setUser(user);
+
+        LocalDate startDate = LocalDate.of(2026, 4, 1);
+        LocalDate endDate = LocalDate.of(2026, 4, 30);
+
+        Transaction transaction = new Transaction(1L, "Ifood", new BigDecimal("53.2"), LocalDate.of(2026, 4, 15), TransactionType.EXPENSE, account, null);
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Transaction> page = new PageImpl<>(List.of(transaction), pageable, 1);
+
+        when(transactionRepository.findByAccountUserIdAndDateBetween(1L, startDate, endDate, pageable)).thenReturn(page);
+
+        Page<TransactionResponseDTO> result = transactionService.listAllTransactions(1L, startDate, endDate, pageable);
+
+        assertNotNull(result);
+        assertEquals(1, result.getTotalElements());
+        assertEquals("Ifood", result.getContent().getFirst().getDescription());
+    }
+
+    @Test
+    @DisplayName("Should return updated TransactionResponseDTO when transaction is found")
+    void updateTransactionCase1() {
+        User user = new User(1L, "renan", "renan@email.com", "123456");
+        Account account = new Account(1L, "Corrente", new BigDecimal("500"), AccountType.CHECKING, user);
+        Transaction transaction = new Transaction(1L, "Ifood", new BigDecimal("50"), LocalDate.of(2026, 4, 29), TransactionType.EXPENSE, account, null);
+
+        TransactionRequestDTO dto = new TransactionRequestDTO(
+                "Ifood Atualizado", new BigDecimal("30"), LocalDate.of(2026, 4, 29), TransactionType.EXPENSE, 1L, null
+        );
+
+        Transaction updated = new Transaction(1L, "Ifood Atualizado", new BigDecimal("30"), LocalDate.of(2026, 4, 29), TransactionType.EXPENSE, account, null);
+
+        when(transactionRepository.findByIdAndAccountUserId(1L, 1L)).thenReturn(Optional.of(transaction));
+        when(transactionRepository.save(any(Transaction.class))).thenReturn(updated);
+
+        TransactionResponseDTO result = transactionService.updateTransaction(1L, dto, 1L);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        assertEquals("Ifood Atualizado", result.getDescription());
+        assertEquals(0, result.getAmount().compareTo(new BigDecimal("30")));
+    }
+
+    @Test
+    @DisplayName("Should throw ResourceNotFoundException when transaction is not found on update")
+    void updateTransactionCase2() {
+        TransactionRequestDTO dto = new TransactionRequestDTO(
+                "Ifood", new BigDecimal("50"), LocalDate.of(2026, 4, 29), TransactionType.EXPENSE, 1L, null
+        );
+
+        when(transactionRepository.findByIdAndAccountUserId(1L, 1L)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> transactionService.updateTransaction(1L, dto, 1L));
+    }
+
+    @Test
+    @DisplayName("Should delete transaction when transaction is found")
+    void deleteTransactionCase1() {
+        User user = new User(1L, "renan", "renan@email.com", "123456");
+        Account account = new Account(1L, "Corrente", new BigDecimal("500"), AccountType.CHECKING, user);
+        Transaction transaction = new Transaction(1L, "Ifood", new BigDecimal("53.2"), LocalDate.of(2026, 4, 29), TransactionType.EXPENSE, account, null);
+
+        when(transactionRepository.findById(1L)).thenReturn(Optional.of(transaction));
+
+        transactionService.deleteTransaction(1L, 1L);
+
+        verify(transactionRepository).delete(transaction);
     }
 }

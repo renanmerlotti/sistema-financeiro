@@ -5,7 +5,10 @@ import com.financas.backend.dto.response.AccountResponseDTO;
 import com.financas.backend.entity.Account;
 import com.financas.backend.entity.AccountType;
 import com.financas.backend.entity.User;
+import com.financas.backend.exception.BusinessRuleException;
+import com.financas.backend.exception.ResourceNotFoundException;
 import com.financas.backend.repository.AccountRepository;
+import com.financas.backend.repository.TransactionRepository;
 import com.financas.backend.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,10 +19,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,6 +34,9 @@ class AccountServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private TransactionRepository transactionRepository;
 
     @InjectMocks
     private AccountServiceImpl accountService;
@@ -71,5 +78,59 @@ class AccountServiceImplTest {
         assertEquals("Poupanca", accountResponseDTOList.getFirst().getName());
         assertEquals(2L, accountResponseDTOList.get(1).getId());
         assertEquals("Corrente", accountResponseDTOList.get(1).getName());
+    }
+
+    @Test
+    @DisplayName("Should return updated AccountResponseDTO when account is found")
+    void updateAccountCase1() {
+        User user = new User(1L, "renan", "renan@email.com", "123456");
+        Account account = new Account(1L, "Corrente", new BigDecimal("500"), AccountType.CHECKING, user);
+        AccountRequestDTO dto = new AccountRequestDTO("Corrente Atualizada", AccountType.CHECKING);
+        Account updated = new Account(1L, "Corrente Atualizada", new BigDecimal("500"), AccountType.CHECKING, user);
+
+        when(accountRepository.findByIdAndUserId(1L, 1L)).thenReturn(Optional.of(account));
+        when(accountRepository.save(any(Account.class))).thenReturn(updated);
+
+        AccountResponseDTO result = accountService.updateAccount(1L, dto, 1L);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        assertEquals("Corrente Atualizada", result.getName());
+    }
+
+    @Test
+    @DisplayName("Should throw ResourceNotFoundException when account is not found on update")
+    void updateAccountCase2() {
+        AccountRequestDTO dto = new AccountRequestDTO("Corrente", AccountType.CHECKING);
+
+        when(accountRepository.findByIdAndUserId(1L, 1L)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> accountService.updateAccount(1L, dto, 1L));
+    }
+
+    @Test
+    @DisplayName("Should delete account when account exists and has no transactions")
+    void deleteAccountCase1() {
+        User user = new User(1L, "renan", "renan@email.com", "123456");
+        Account account = new Account(1L, "Poupanca", new BigDecimal("1000"), AccountType.SAVINGS, user);
+
+        when(accountRepository.findById(1L)).thenReturn(Optional.of(account));
+        when(transactionRepository.existsByAccountId(1L)).thenReturn(false);
+
+        accountService.deleteAccount(1L, 1L);
+
+        verify(accountRepository).delete(account);
+    }
+
+    @Test
+    @DisplayName("Should throw BusinessRuleException when account has associated transactions")
+    void deleteAccountCase2() {
+        User user = new User(1L, "renan", "renan@email.com", "123456");
+        Account account = new Account(1L, "Poupanca", new BigDecimal("1000"), AccountType.SAVINGS, user);
+
+        when(accountRepository.findById(1L)).thenReturn(Optional.of(account));
+        when(transactionRepository.existsByAccountId(1L)).thenReturn(true);
+
+        assertThrows(BusinessRuleException.class, () -> accountService.deleteAccount(1L, 1L));
     }
 }

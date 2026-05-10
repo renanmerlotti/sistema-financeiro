@@ -15,6 +15,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,5 +48,25 @@ class UserServiceImplTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> userService.getUserById(99L));
+    }
+
+    @Test
+    @DisplayName("Should delete user when user is found")
+    void deleteUserCase1() {
+        User user = new User(1L, "renan", "renan@email.com", "123456");
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        userService.deleteUser(1L);
+
+        verify(userRepository).delete(user);
+    }
+
+    @Test
+    @DisplayName("Should throw ResourceNotFoundException when user id does not exist on delete")
+    void deleteUserCase2() {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> userService.deleteUser(99L));
     }
 }
