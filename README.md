@@ -1,4 +1,4 @@
-# Sistema Financeiro
+# Personal Finance Manager 
 
 A full-stack personal finance management app built with Spring Boot and React. Users can track accounts, categorize transactions, and monitor income vs. expenses through a dashboard with charts and period filtering.
 
