@@ -12,7 +12,11 @@ A full-stack personal finance management app built with Spring Boot and React. U
 
 ## Demo
 
-Video
+
+
+https://github.com/user-attachments/assets/c2547956-578d-4ac0-9e93-398f945f8fdd
+
+
 
 ---
 
@@ -69,7 +73,7 @@ Requirements: Docker and Docker Compose.
 ```bash
 git clone https://github.com/renanmerlotti/sistema-financeiro
 cd sistema-financeiro
-docker compose up --build
+docker-compose up --build
 ```
 
 | Service | URL |
